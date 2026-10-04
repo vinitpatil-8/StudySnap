@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="StudySnap creates a focused study plan from your own notes." />
+    <title>StudySnap | Your next study session</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="StudySnap home"><span class="brand-mark">S</span><span>StudySnap</span></a>
+      <div class="topbar-actions"><div class="status"><span class="status-dot"></span> Your focused study companion</div><button class="text-button" id="about-open" type="button">About StudySnap</button></div>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">PLAN THE NEXT RIGHT THING</p>
+        <h1>Make your study time <em>count.</em></h1>
+        <p class="hero-copy">Bring your syllabus, your time, and your deadline. StudySnap turns them into a plan you can actually finish today.</p>
+      </section>
+
+      <section class="planner-grid" aria-label="Study plan inputs">
+        <form class="input-panel" id="planner-form" novalidate>
+          <div class="panel-heading">
+            <div><span class="section-number">01</span><h2>Set your context</h2></div>
+            <span class="required-note">All fields matter</span>
+          </div>
+          <div class="mode-control" role="group" aria-label="Planning mode">
+            <span class="mode-label">Planning mode</span>
+            <div class="mode-switch"><button class="mode-option is-active" type="button" data-mode="normal" aria-pressed="true">Normal Mode</button><button class="mode-option" type="button" data-mode="emergency" aria-pressed="false">Emergency Mode <span aria-hidden="true">&#128680;</span></button></div>
+          </div>
+          <label for="subject">What are you studying?<span>*</span></label>
+          <input id="subject" name="subject" type="text" placeholder="e.g. Organic chemistry" autocomplete="off" required />
+
+          <label for="notes">Paste your notes or syllabus<span>*</span></label>
+          <textarea id="notes" name="notes" rows="8" placeholder="One topic per line works best..." required></textarea>
+          <p class="field-hint">StudySnap only plans from topics you provide.</p>
+
+          <div class="input-row">
+            <div>
+              <label for="hours">Study time today<span>*</span></label>
+              <div class="input-with-unit"><input id="hours" name="hours" type="number" min="0.5" max="16" step="0.5" value="2" required /><span>hours</span></div>
+            </div>
+            <div>
+              <label for="exam-date">Exam date<span>*</span></label>
+              <input id="exam-date" name="examDate" type="date" required />
+            </div>
+          </div>
+          <button class="primary-button" type="submit"><span>Build my plan</span><span class="arrow">&#8594;</span></button>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </form>
+
+        <aside class="tip-panel">
+          <div class="tip-icon">&#10022;</div>
+          <p class="eyebrow">A SMALL REMINDER</p>
+          <h2>Progress likes a clear next step.</h2>
+          <p>Start with the topic that needs the most active recall, not the one that feels easiest to reread.</p>
+          <div class="tip-rule"></div>
+          <p class="tip-foot">No perfect day required.</p>
+        </aside>
+      </section>
+
+      <section class="quick-start" aria-labelledby="quick-start-title">
+        <div class="section-intro"><p class="eyebrow">QUICK START</p><h2 id="quick-start-title">Begin with a realistic starting point.</h2><p>Presets fill the form with editable examples. Your plan is only created when you choose to build it.</p></div>
+        <div class="preset-grid"><button class="preset-card" type="button" data-preset="three-days"><span class="preset-icon">03</span><strong>Exam in 3 days</strong><small>Steady coverage</small></button><button class="preset-card" type="button" data-preset="tomorrow"><span class="preset-icon">24h</span><strong>Exam tomorrow</strong><small>Rapid prioritization</small></button><button class="preset-card" type="button" data-preset="two-hours"><span class="preset-icon">2h</span><strong>2-hour study session</strong><small>Deep work window</small></button><button class="preset-card" type="button" data-preset="revision"><span class="preset-icon">30</span><strong>30-minute revision</strong><small>Quick recall sprint</small></button></div>
+      </section>
+
+      <section class="empty-plan" id="empty-plan" aria-label="No generated plan"><span class="empty-icon">&#10022;</span><div><p class="eyebrow">YOUR PLAN WILL APPEAR HERE</p><h2>Nothing scheduled yet.</h2><p>Enter your own topics above, then build a plan for today.</p></div></section>
+
+      <section class="results" id="results" hidden aria-live="polite">
+        <div class="results-header">
+          <div><p class="eyebrow">YOUR SNAPSHOT</p><h2 id="plan-title">Today's plan</h2></div>
+          <div class="days-badge"><strong id="days-count">--</strong><span>days<br />to go</span></div>
+        </div>
+
+        <div class="result-meta"><span class="mode-badge" id="result-mode">NORMAL MODE</span><span id="created-label">Created just now</span></div>
+
+        <div class="plan-layout">
+          <div class="schedule-block">
+            <div class="subheading"><span class="section-number">02</span><h3>Today's study schedule</h3><span class="total-time" id="total-time"></span></div>
+            <div id="schedule-list" class="schedule-list"></div>
+          </div>
+          <div class="priority-block">
+            <div class="subheading"><span class="section-number">03</span><h3>Highest priority</h3></div>
+            <ol id="priority-list" class="priority-list"></ol>
+          </div>
+        </div>
+
+        <div class="lower-grid">
+          <div class="checklist-block"><div class="subheading"><span class="section-number">04</span><h3>Revision checklist</h3></div><ul id="checklist" class="checklist"></ul></div>
+          <div class="questions-block"><div class="subheading"><span class="section-number">05</span><h3>Practice questions</h3></div><ol id="questions" class="questions"></ol></div>
+        </div>
+
+        <div class="progress-card">
+          <div class="subheading"><span class="section-number">06</span><h3>Session progress</h3><strong class="progress-percent" id="progress-percent">0%</strong></div>
+          <div class="progress-track" role="progressbar" aria-label="Study session completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+          <div class="progress-summary"><span id="completed-count">0 completed</span><span id="remaining-count">0 remaining</span></div>
+        </div>
+
+        <div class="why-plan"><div class="why-mark">?</div><div><p class="eyebrow">WHY THIS PLAN?</p><p id="plan-rationale"></p></div></div>
+      </section>
+
+      <section class="history-section" aria-labelledby="history-title">
+        <div class="section-heading"><div><p class="eyebrow">LOCAL ARCHIVE</p><h2 id="history-title">Previous plans</h2></div><button class="text-button danger-button" id="clear-history" type="button">Clear history</button></div>
+        <div class="history-list" id="history-list"></div>
+      </section>
+
+      <section class="friend-note" aria-label="Why StudySnap was built">
+        <div class="friend-note-mark">&#10022;</div>
+        <div>
+          <p class="eyebrow">BUILD FOR A FRIEND</p>
+          <p class="friend-note-copy">StudySnap was built for a friend who often knew what they needed to study, but struggled to turn a huge syllabus and limited time into a realistic plan.</p>
+        </div>
+      </section>
+
+      <section class="focus-overlay" id="focus-mode" hidden aria-live="polite" aria-label="Focus mode">
+        <div class="focus-panel">
+          <button class="focus-close" id="focus-close" type="button" aria-label="Close focus mode">&#10005;</button>
+          <p class="eyebrow">FOCUS MODE</p>
+          <h2 id="focus-title">Current task</h2>
+          <p class="focus-mode-label" id="focus-mode-label"></p>
+          <div class="focus-clock" id="focus-clock">00:00</div>
+          <div class="focus-progress-track" role="progressbar" aria-label="Focus task progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="focus-progress-fill"></span></div>
+          <div class="focus-actions">
+            <button class="secondary-button" id="focus-pause" type="button">Pause</button>
+            <button class="primary-button" id="focus-finish" type="button"><span>Finish task</span><span class="arrow">&#8594;</span></button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer><span>STUDYSNAP / 2026</span><span>Built for a friend &#10084;</span></footer>
+    <div class="about-overlay" id="about-modal" hidden role="dialog" aria-modal="true" aria-labelledby="about-title"><div class="about-panel"><button class="focus-close" id="about-close" type="button" aria-label="Close About StudySnap">&#10005;</button><p class="eyebrow">ABOUT STUDYSNAP</p><h2 id="about-title">StudySnap</h2><p class="about-tagline">Your notes. Your deadline. Your plan.</p><p>StudySnap was built for a friend who often knew what they needed to study, but struggled to turn a huge syllabus and limited time into a realistic plan.</p><p class="about-credit">Built for a Friend &mdash; Hacktoberfest 2026.</p></div></div>
+    <script src="app.js"></script>
+  </body>
+</html>
